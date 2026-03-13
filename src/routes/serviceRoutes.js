@@ -7,13 +7,19 @@ import {
   deleteService,
 } from "../controllers/serviceController.js";
 
+import { createServiceValidation } from "../utils/serviceValidation.js";
+import { validateRequest } from "../middleware/validateRequest.js";
+
 const router = express.Router();
 
-router.route("/").post(createService).get(getAllServices);
-router
-  .route("/:id")
-  .get(getServiceById)
-  .put(updateService)
-  .delete(deleteService);
+router.post("/", createServiceValidation, validateRequest, createService);
+
+router.get("/", getAllServices);
+
+router.get("/:id", getServiceById);
+
+router.put("/:id", updateService);
+
+router.delete("/:id", deleteService);
 
 export default router;

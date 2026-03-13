@@ -1,9 +1,12 @@
 import Service from "../models/serviceModel.js";
 
-// @desc    Create a new salon service
-// @route   POST /api/services
-// @access  Public for now (protect later)
-export const createService = async (req, res) => {
+/*
+-----------------------------------------
+Create a new salon service
+POST /api/services
+-----------------------------------------
+*/
+export const createService = async (req, res, next) => {
   try {
     const { name, category, price, duration, description, isAvailable } =
       req.body;
@@ -11,10 +14,9 @@ export const createService = async (req, res) => {
     const existingService = await Service.findOne({ name });
 
     if (existingService) {
-      return res.status(400).json({
-        success: false,
-        message: "Service with this name already exists",
-      });
+      const error = new Error("Service already exists");
+      error.statusCode = 400;
+      throw error;
     }
 
     const service = await Service.create({
@@ -32,18 +34,17 @@ export const createService = async (req, res) => {
       data: service,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to create service",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-// @desc    Get all salon services
-// @route   GET /api/services
-// @access  Public
-export const getAllServices = async (req, res) => {
+/*
+-----------------------------------------
+Get all salon services
+GET /api/services
+-----------------------------------------
+*/
+export const getAllServices = async (req, res, next) => {
   try {
     const services = await Service.find().sort({ createdAt: -1 });
 
@@ -53,26 +54,24 @@ export const getAllServices = async (req, res) => {
       data: services,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch services",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-// @desc    Get single service by ID
-// @route   GET /api/services/:id
-// @access  Public
-export const getServiceById = async (req, res) => {
+/*
+-----------------------------------------
+Get single service by ID
+GET /api/services/:id
+-----------------------------------------
+*/
+export const getServiceById = async (req, res, next) => {
   try {
     const service = await Service.findById(req.params.id);
 
     if (!service) {
-      return res.status(404).json({
-        success: false,
-        message: "Service not found",
-      });
+      const error = new Error("Service not found");
+      error.statusCode = 404;
+      throw error;
     }
 
     res.status(200).json({
@@ -80,26 +79,24 @@ export const getServiceById = async (req, res) => {
       data: service,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch service",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-// @desc    Update service by ID
-// @route   PUT /api/services/:id
-// @access  Public for now (protect later)
-export const updateService = async (req, res) => {
+/*
+-----------------------------------------
+Update service by ID
+PUT /api/services/:id
+-----------------------------------------
+*/
+export const updateService = async (req, res, next) => {
   try {
     const service = await Service.findById(req.params.id);
 
     if (!service) {
-      return res.status(404).json({
-        success: false,
-        message: "Service not found",
-      });
+      const error = new Error("Service not found");
+      error.statusCode = 404;
+      throw error;
     }
 
     const updatedService = await Service.findByIdAndUpdate(
@@ -117,26 +114,24 @@ export const updateService = async (req, res) => {
       data: updatedService,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to update service",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-// @desc    Delete service by ID
-// @route   DELETE /api/services/:id
-// @access  Public for now (protect later)
-export const deleteService = async (req, res) => {
+/*
+-----------------------------------------
+Delete service by ID
+DELETE /api/services/:id
+-----------------------------------------
+*/
+export const deleteService = async (req, res, next) => {
   try {
     const service = await Service.findById(req.params.id);
 
     if (!service) {
-      return res.status(404).json({
-        success: false,
-        message: "Service not found",
-      });
+      const error = new Error("Service not found");
+      error.statusCode = 404;
+      throw error;
     }
 
     await Service.findByIdAndDelete(req.params.id);
@@ -146,10 +141,6 @@ export const deleteService = async (req, res) => {
       message: "Service deleted successfully",
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete service",
-      error: error.message,
-    });
+    next(error);
   }
 };
