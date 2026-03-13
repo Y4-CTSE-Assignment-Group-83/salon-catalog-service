@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import serviceRoutes from "./routes/serviceRoutes.js";
 
 const app = express();
 
@@ -18,5 +19,7 @@ app.get("/", (req, res) => {
     message: "Service Catalog API is running",
   });
 });
+
+app.use("/api/services", serviceRoutes);
 
 export default app;
