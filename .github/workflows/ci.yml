@@ -1,31 +1,30 @@
-# name: Node.js CI Pipeline
+name: Node.js CI
 
-# on:
-#   push:
-#     branches: [ main ]
-#   pull_request:
-#     branches: [ main ]
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
 
-# jobs:
-#   build:
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
 
-#     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-#     steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
 
-#       - name: Checkout Repository
-#         uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
 
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: 20
+      - name: Run lint
+        run: npm run lint
 
-#       - name: Install Dependencies
-#         run: npm install
-
-#       - name: Run Tests
-#         run: npm test
-
-#       - name: Build Docker Image
-#         run: docker build -t service-catalog-service .
+      - name: Run tests
+        run: npm test
