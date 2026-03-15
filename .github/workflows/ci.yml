@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build-and-docker:
+  build-and-security:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,6 +28,14 @@ jobs:
 
       - name: Run Tests
         run: npm test
+
+      # Snyk Security Scan
+      - name: Run Snyk Security Scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
 
       - name: Build Docker Image
         run: docker build -f docker/Dockerfile -t service-catalog-service .
