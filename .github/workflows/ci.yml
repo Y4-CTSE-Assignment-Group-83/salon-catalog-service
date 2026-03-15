@@ -1,17 +1,17 @@
-name: Node.js CI
+name: Service Catalog CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
 
 jobs:
-  build-and-check:
+  build-and-docker:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -20,11 +20,14 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: Run lint
+      - name: Run Lint
         run: npm run lint
 
-      - name: Run tests
+      - name: Run Tests
         run: npm test
+
+      - name: Build Docker Image
+        run: docker build -f docker/Dockerfile -t service-catalog-service .
