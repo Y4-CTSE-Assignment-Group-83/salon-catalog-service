@@ -5,6 +5,7 @@ import morgan from "morgan";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
 import { swaggerDocs } from "./docs/swagger.js";
+import path from "path";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
+app.use("/uploads", express.static("uploads"));
 
 // Test route
 app.get("/", (req, res) => {

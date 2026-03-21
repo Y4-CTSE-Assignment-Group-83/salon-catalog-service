@@ -19,6 +19,8 @@ export const createService = async (req, res, next) => {
       throw error;
     }
 
+    const imagePath = req.file ? `/uploads/${req.file.filename}` : "";
+
     const service = await Service.create({
       name,
       category,
@@ -26,6 +28,7 @@ export const createService = async (req, res, next) => {
       duration,
       description,
       isAvailable,
+      image: imagePath,
     });
 
     res.status(201).json({
