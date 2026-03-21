@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build-and-security:
     runs-on: ubuntu-latest
@@ -29,7 +33,6 @@ jobs:
       - name: Run Tests
         run: npm test
 
-      # Snyk Security Scan
       - name: Run Snyk Security Scan
         uses: snyk/actions/node@master
         env:
@@ -37,5 +40,14 @@ jobs:
         with:
           args: --severity-threshold=high
 
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
       - name: Build Docker Image
-        run: docker build -f docker/Dockerfile -t service-catalog-service .
+        run: |
+          docker build -f docker/Dockerfile \
+          -t ghcr.io/${{ github.repository_owner }}/service-catalog:latest .
+
+      - name: Push Docker Image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/service-catalog:latest
