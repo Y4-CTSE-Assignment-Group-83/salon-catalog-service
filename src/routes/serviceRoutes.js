@@ -149,7 +149,7 @@ router.post(
   createService,
 );
 
-router.put("/:id", updateService);
+router.put("/:id", upload.single("image"), updateService);
 
 router.delete("/:id", deleteService);
 

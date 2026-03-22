@@ -102,11 +102,21 @@ export const updateService = async (req, res, next) => {
       throw error;
     }
 
+    // 🔥 Handle image update
+    let imagePath = service.image;
+
+    if (req.file) {
+      imagePath = `/uploads/${req.file.filename}`;
+    }
+
     const updatedService = await Service.findByIdAndUpdate(
       req.params.id,
-      req.body,
       {
-        new: true,
+        ...req.body,
+        image: imagePath,
+      },
+      {
+        returnDocument: "after", // ✅ FIX deprecation warning
         runValidators: true,
       },
     );
