@@ -6,15 +6,21 @@ import serviceRoutes from "./routes/serviceRoutes.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
 import { swaggerDocs } from "./docs/swagger.js";
 import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // Middleware
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false, // 🔥 FIX
+  }),
+);
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Test route
 app.get("/", (req, res) => {
