@@ -13,30 +13,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout
+      # Checkout
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node
+      # Setup Node
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      # 3️⃣ Install deps
+      # Install deps
       - name: Install Dependencies
         run: npm install
 
-      # 4️⃣ Lint
+      # Lint
       - name: Run Lint
         run: npm run lint
 
-      # 5️⃣ Tests
+      # Tests
       - name: Run Tests
         run: npm test
 
-      # 6️⃣ Security scan
+      # Security scan
       - name: Run Snyk Scan
         uses: snyk/actions/node@master
         env:
@@ -44,7 +44,7 @@ jobs:
         with:
           args: --severity-threshold=high
 
-      # 7️⃣ Configure AWS credentials
+      # Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -52,22 +52,22 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 8️⃣ Login to ECR
+      # Login to ECR
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 9️⃣ Build Docker Image
+      # Build Docker Image
       - name: Build Docker image
         run: |
           docker build -f docker/Dockerfile \
           -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest .
 
-      # 🔟 Push to ECR
+      # Push to ECR
       - name: Push Docker image to ECR
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
 
-      # 🔥 11️⃣ Deploy to ECS (AUTO DEPLOY)
+      #  Deploy to ECS (AUTO DEPLOY)
       - name: Force new ECS deployment
         run: |
           aws ecs update-service \
