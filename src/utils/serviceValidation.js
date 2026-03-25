@@ -16,6 +16,7 @@ export const createServiceValidation = [
     .withMessage("Price must be a number"),
 
   body("duration")
+    .trim()
     .notEmpty()
     .withMessage("Duration is required")
     .isNumeric()

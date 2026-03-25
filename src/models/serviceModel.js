@@ -27,6 +27,10 @@ const serviceSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    image: {
+      type: String,
+      default: "",
+    },
     isAvailable: {
       type: Boolean,
       default: true,

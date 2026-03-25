@@ -19,6 +19,8 @@ export const createService = async (req, res, next) => {
       throw error;
     }
 
+    const imagePath = req.file ? `/uploads/${req.file.filename}` : "";
+
     const service = await Service.create({
       name,
       category,
@@ -26,6 +28,7 @@ export const createService = async (req, res, next) => {
       duration,
       description,
       isAvailable,
+      image: imagePath,
     });
 
     res.status(201).json({
@@ -99,11 +102,21 @@ export const updateService = async (req, res, next) => {
       throw error;
     }
 
+    // 🔥 Handle image update
+    let imagePath = service.image;
+
+    if (req.file) {
+      imagePath = `/uploads/${req.file.filename}`;
+    }
+
     const updatedService = await Service.findByIdAndUpdate(
       req.params.id,
-      req.body,
       {
-        new: true,
+        ...req.body,
+        image: imagePath,
+      },
+      {
+        returnDocument: "after", // ✅ FIX deprecation warning
         runValidators: true,
       },
     );

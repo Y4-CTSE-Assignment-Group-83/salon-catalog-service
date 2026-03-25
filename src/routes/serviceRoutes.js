@@ -9,6 +9,7 @@ import {
 
 import { createServiceValidation } from "../utils/serviceValidation.js";
 import { validateRequest } from "../middleware/validateRequest.js";
+import upload from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -23,11 +24,11 @@ const router = express.Router();
  * @swagger
  * /api/services:
  *   get:
- *     summary: Get all salon services
+ *     summary: Get all services
  *     tags: [Services]
  *     responses:
  *       200:
- *         description: List of services
+ *         description: List of all services
  */
 router.get("/", getAllServices);
 
@@ -35,7 +36,7 @@ router.get("/", getAllServices);
  * @swagger
  * /api/services/{id}:
  *   get:
- *     summary: Get service by ID
+ *     summary: Get a service by ID
  *     tags: [Services]
  *     parameters:
  *       - in: path
@@ -56,12 +57,12 @@ router.get("/:id", getServiceById);
  * @swagger
  * /api/services:
  *   post:
- *     summary: Create new salon service
+ *     summary: Create a new service
  *     tags: [Services]
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -75,27 +76,54 @@ router.get("/:id", getServiceById);
  *                 type: number
  *               description:
  *                 type: string
+ *               image:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       201:
  *         description: Service created
  */
-router.post("/", createServiceValidation, validateRequest, createService);
+router.post(
+  "/",
+  upload.single("image"),
+  createServiceValidation,
+  validateRequest,
+  createService,
+);
 
 /**
  * @swagger
  * /api/services/{id}:
  *   put:
- *     summary: Update service
+ *     summary: Update a service
  *     tags: [Services]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Service updated
  */
-router.put("/:id", updateService);
+router.put("/:id", upload.single("image"), updateService);
 
 /**
  * @swagger
  * /api/services/{id}:
  *   delete:
- *     summary: Delete service
+ *     summary: Delete a service
  *     tags: [Services]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Service deleted
  */
 router.delete("/:id", deleteService);
 
