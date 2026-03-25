@@ -18,7 +18,12 @@ app.use(
     crossOriginResourcePolicy: false,
   }),
 );
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://ctse-alb-320060941.eu-north-1.elb.amazonaws.com"],
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("dev"));
