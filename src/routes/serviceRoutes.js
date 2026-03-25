@@ -10,6 +10,7 @@ import {
 import { createServiceValidation } from "../utils/serviceValidation.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import upload from "../middleware/uploadMiddleware.js";
+import { requireAdmin, verifyToken } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -30,7 +31,7 @@ const router = express.Router();
  *       200:
  *         description: List of all services
  */
-router.get("/", getAllServices);
+router.get("/", verifyToken, getAllServices);
 
 /**
  * @swagger
@@ -51,7 +52,7 @@ router.get("/", getAllServices);
  *       404:
  *         description: Service not found
  */
-router.get("/:id", getServiceById);
+router.get("/:id", verifyToken, getServiceById);
 
 /**
  * @swagger
@@ -85,6 +86,8 @@ router.get("/:id", getServiceById);
  */
 router.post(
   "/",
+  verifyToken,
+  requireAdmin,
   upload.single("image"),
   createServiceValidation,
   validateRequest,
@@ -107,7 +110,13 @@ router.post(
  *       200:
  *         description: Service updated
  */
-router.put("/:id", upload.single("image"), updateService);
+router.put(
+  "/:id",
+  verifyToken,
+  requireAdmin,
+  upload.single("image"),
+  updateService,
+);
 
 /**
  * @swagger
@@ -125,6 +134,6 @@ router.put("/:id", upload.single("image"), updateService);
  *       200:
  *         description: Service deleted
  */
-router.delete("/:id", deleteService);
+router.delete("/:id", verifyToken, requireAdmin, deleteService);
 
 export default router;
